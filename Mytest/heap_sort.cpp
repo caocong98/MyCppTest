@@ -1,101 +1,86 @@
 #include <iostream>
 #include <vector>
+#include <assert.h>
 using namespace std;
 
 template<class T>
-struct Less {
-    bool operator () (const T& left, const T& right) const {
-        return left < right;
+class Less {
+public:
+    bool operator() (const T& a, const T& b) const{
+        return a < b;
     }
 };
 
 template<class T>
-struct Greater {
-    bool operator () (const T& left, const T& right) const {
-        return left > right;
+class Greater {
+public:
+    bool operator() (const T& a, const T& b) const {
+        return a > b;
     }
 };
 
 template<class T, class Compare = Less<T>>
-class myHeap {   
-// 默认大顶堆   操作数组时 将实际索引减1    不稳定算法， 插入，pop复杂度logn
-//主要操作：  
-// 1 ： 上调函数  用于push后调整新元素至正确位置
-// 2 ： 下调函数  建堆（从 n/2 循环调用至第1个结点）  堆排序（第一个和最后一个元素交换后下调， 循环n - 1次）
+class myHeap {
 public:
-    myHeap(vector<T>& num = {}) : nums(num.begin(), num.end()) {}
-    
-    bool empty() { return nums.size() == 0; }
-    
-    T top() {
-        if (empty()) {
-            cout << "none of date." << endl;
-            throw "none of date." ;
+    myHeap(vector<T>& num) : nums(num.begin(), num.end()), size(nums.size()) {}
+
+    bool empty() { return size == 0; }
+
+    void make_heap() {
+        for (int i = size / 2; i >= 1; --i) {
+            adjust_down(i, size);
         }
+    }
+
+    void heap_sort() {
+        int n = size;
+        for (int i = 0; i < size - 1; ++i) {
+            swap(nums[0], nums[n - 1]);
+            adjust_down(1, --n);
+        }
+    }
+
+    T top() {
+        assert(size > 0);
         return nums[0];
     }
 
     void pop() {
-        if (empty()) {
-            cout << "none of date to delete." << endl;
-            throw "none of date to delete.";
-        }
-        swap(nums[0], nums[nums.size() - 1]);
-        nums.pop_back();
-        adjust_down(1, nums.size());
+        assert(size > 0);
+        swap(nums[0], nums[size - 1]);
+        --size;
+        adjust_down(1, size);
     }
 
-    void push(T num) {
+    void push(const T& num) {
         nums.push_back(num);
-        adjust_up(nums.size());
-    }
-
-    void makeHeap() {
-        for (int i = nums.size() / 2; i >= 1; --i) {
-            adjust_down(i, nums.size());
-        }
-    }
-
-    void heapSort() {
-        int time = nums.size() - 1, n = nums.size();
-        while (time--) {
-            swap(nums[0], nums[n - 1]);
-            n--;
-            adjust_down(1, n);
-        }
+        ++size;
+        adjust_up(size);
     }
 
     void print() {
-        // cout << "size: " << nums.size() << endl;
-        for (int i = 0; i < nums.size(); ++i) {
+        for (int i = 0; i < size; ++i) {
             cout << nums[i] << ' ';
         }
         cout << endl;
     }
 
 private:
-    vector<int> nums;
-    void adjust_down(int location, int end) {
-        Compare com;
-        int parent = location, child = 2 * location;
+    void adjust_down(int ind, int end) {
+        int parent = ind, child = 2 * parent;
         while (child <= end) {
-            if (child + 1 <= end && com(nums[child - 1], nums[child + 1 - 1])) {
-                ++child;
-            }
+            if (child + 1 <= end && com(nums[child - 1], nums[child])) ++child;
             if (com(nums[parent - 1], nums[child - 1])) {
-                swap(nums[parent - 1], nums[child - 1]);
-                parent = child;
-                child = 2 * parent;
+                 swap(nums[parent - 1], nums[child - 1]);
+                 parent = child;
+                 child = 2 * parent;
             }
-            else {
-                break;
-            }
+            else break;
         }
     }
 
-    void adjust_up(int location) {
-        Compare com;
-        int parent = location / 2, child = location;
+    void adjust_up(int ind) {
+        int parent = ind / 2, child = ind;
         while (parent >= 1) {
             if (com(nums[parent - 1], nums[child - 1])) {
                 swap(nums[parent - 1], nums[child - 1]);
@@ -106,6 +91,10 @@ private:
         }
     }
 
+private:
+    vector<T> nums;
+    int size;
+    Compare com;
 };
 
 
@@ -117,22 +106,23 @@ int main() {
     myHeap<int> head2(test2);   
     cout << "origin heap1:";
     head1.print();
-    cout << "origin heap1:";
+    cout << "origin heap2:";
     head2.print();
-    head1.makeHeap();
+    head1.make_heap();
     cout << "maked heap1:";
     head1.print();
-    head1.heapSort();
+    head1.heap_sort();
     cout << "sorted heap1:";
     head1.print();
     cout << "head2.top(): " << head2.top() << endl;
-    head2.makeHeap();
+    head2.make_heap();
     // head2.heapSort();
     int n = 3;
     while (n--) head2.pop();   
     cout << head2.top() << endl;
-    head2.heapSort();
+    head2.heap_sort();
     cout << "sorted heap2: ";
     head2.print();
     return 0;
+
 }

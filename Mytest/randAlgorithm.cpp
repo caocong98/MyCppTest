@@ -1,54 +1,56 @@
 #include <iostream>
-#include <algorithm>
+#include <time.h>
 #include <vector>
 #include <assert.h>
-#include <time.h>
 using namespace std;
 
-vector<int> rand1(int n, int m) {
-    //n 个数中取 m 个数  每个数只能选1次， 一个一个选
-    //每次随机选中一个后交换至容器尾部，下次不会选中
-    // 默认从1 ~ n中选
-    srand(time(NULL));  //随机种子
+
+vector<int> rand1(vector<int> nums, int m) {
+//nums中抽取m个,一次次抽，非等概率
+    int n = nums.size();
     assert(n >= m);
-    vector<int> nums(n);
     vector<int> ans;
-    for (int i = 0; i < n; ++i) nums[i] = i + 1;  // 初始化奖池
-    for (int i = 1; i <= m; ++i) {
-        int chooseId = rand() % (n - i + 1);
-        ans.push_back(nums[chooseId]);
-        swap(nums[chooseId], nums[n - i]);
+    for (int i = 0; i < m; ++i) {
+        int ind = rand() % (n - i);
+        ans.push_back(nums[ind]);
+        swap(nums[ind], nums[n - i - 1]);
     }
     return ans;
 }
 
-
-vector<int> rand2(int n, int m) {
-    //蓄水池算法，等概率（m/n）选出 m 个数， 遍历一遍数据流，不用一次性读入所有数据
-    // lc  382 398
+vector<int> rand2(vector<int> nums, int m) {
+//蓄水池算法  n 选 m等概率
+    int n = nums.size();
     assert(n >= m);
-    srand(time(NULL));
-    vector<int> nums(n);
     vector<int> ans(m);
-    for (int i = 0; i < n; ++i) nums[i] = i + 1;  //初始化奖池
-    //前m个数放入选中数组
-    for (int i = 0; i < m; ++i) ans[i] = nums[i];
-
+    for (int i = 0; i < m; ++i) ans[i] = nums[i];  //前m个先放入奖池
     for (int i = m; i < n; ++i) {
-        int chooseId = rand() % (i + 1);  // 当前选中概率为 m / i + 1;
-        if (chooseId < m) {  //选中  
-            ans[chooseId] = nums[i];
-        }
+        int ind = rand() % (i + 1);
+        if (ind < m) ans[ind] = nums[i];
     }
     return ans;
 }
+
 
 int main() {
-    vector<int> test1 = rand1(10, 3);
-    for (auto num : test1) cout << num << ' ';
+    srand(time(nullptr)); //放外面只调用1次
+    vector<int> nums{1, 2, 3, 4, 5, 6, 7};
+    vector<int> ans1 = rand1(nums, 3);
+    vector<int> ans2 = rand1(nums, 3);
+    vector<int> ans3 = rand1(nums, 3);
+    cout << "ans1:";
+    for (auto num : ans1) cout << num << ' ';
     cout << endl;
-    vector<int> test2 = rand2(10, 3);
-    for (auto num : test2) cout << num << ' ';
+    cout << "ans2:";
+    for (auto num : ans2) cout << num << ' ';
+    cout << endl;
+    cout << "ans3:";
+    for (auto num : ans3) cout << num << ' ';
+    cout << endl;
+
+    vector<int> ans4 = rand2(nums, 3);
+    cout << "ans4:";
+    for (auto num : ans4) cout << num << ' ';
     cout << endl;
     return 0;
 }

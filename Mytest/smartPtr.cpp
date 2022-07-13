@@ -2,72 +2,54 @@
 #include <memory>
 using namespace std;
 
-
+// //死锁 shared_ptr
 // class B;
 // class A
 // {
 // public:
-// 	A()
-// 	{
-// 		std::cout << "A()" << std::endl;
-// 	}
-// 	~A()
-// 	{
-// 		std::cout << "~A()" << std::endl;
-// 	}
-// public:
-// 	shared_ptr<B> spa;
+//     A() { cout << "A()\n"; }
+//     ~A() { cout << "~A()\n"; }
+
+//     shared_ptr<B> ptra;
 // };
-// class B
+// class B 
 // {
 // public:
-// 	B()
-// 	{
-// 		std::cout << "B()" << std::endl;
-// 	}
-// 	~B()
-// 	{
-// 		std::cout << "~B()" << std::endl;
-// 	}
-// public:
-// 	shared_ptr<A> spb;
+//     B() { cout << "B()\n"; }
+//     ~B() { cout << "~B()\n"; }
+
+//     shared_ptr<A> ptrb;
 // };
 
+// weak_prt
 class B;
 class A
 {
 public:
-	A()
-	{
-		std::cout << "A()" << std::endl;
-	}
-	~A()
-	{
-		std::cout << "~A()" << std::endl;
-	}
-public:
-	weak_ptr<B> spa;
+    A() { cout << "A()\n"; }
+    ~A() { cout << "~A()\n"; }
+
+    weak_ptr<B> ptra;
 };
-class B
+class B 
 {
 public:
-	B()
-	{
-		std::cout << "B()" << std::endl;
-	}
-	~B()
-	{
-		std::cout << "~B()" << std::endl;
-	}
-public:
-	weak_ptr<A> spb;
+    B() { cout << "B()\n"; }
+    ~B() { cout << "~B()\n"; }
+
+    weak_ptr<A> ptrb;
 };
 
-int main()
-{
-	shared_ptr<A> pa(new A());
-	shared_ptr<B> pb(new B());
-	pa->spa = pb;
-	pb->spb = pa;
-	return 0;
+int main() {
+    shared_ptr<A> a(new A());
+    shared_ptr<B> b(new B());
+    a->ptra = b;
+    b->ptrb = a;
+    shared_ptr<int> c = make_shared<int>(3);
+    cout << *c << endl;
+    cout << *c.get() <<  endl;
+    weak_ptr<int> d = c;
+    // cout << *d << endl;  //wrong
+    cout << *d.lock() << endl;
+    return 0;
 }

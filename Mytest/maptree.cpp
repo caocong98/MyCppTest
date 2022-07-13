@@ -2,61 +2,45 @@
 #include <vector>
 using namespace std;
 
-
 class mapTree {
+//只由26个小写字母组成
+private:
+    vector<mapTree*> board;
+    bool isend;
+
 public:
-    mapTree() : Node(vector<mapTree*>(26, nullptr)), istrue(false) {
-        cout << "create" << endl;
-    }
-    ~mapTree() {
-        for (auto it : Node) {
-            if (it != nullptr) delete it;
-        }
-        cout << "delete" << endl;
-    }
+    mapTree() : board(vector<mapTree*>(26, nullptr)), isend(false) {}
+
     void insert(const string& word) {
-        mapTree* node = this;
+        mapTree* now = this;
         for (auto& c : word) {
-            int index = c - 'a';
-            if (node->Node[index] == nullptr) node->Node[index] = new mapTree();
-            node = node->Node[index];
+            int ind = c - 'a';
+            if (now->board[ind] == nullptr) now->board[ind] = new mapTree();
+            now = now->board[ind];
         }
-        node->istrue = true;
+        now->isend = true;
     }
 
     bool search(const string& word) {
-        mapTree* node = this;
+        //查找字典树中是否存在单词word
+        mapTree* now = this;
         for (auto& c : word) {
-            int index = c - 'a';
-            if (node->Node[index] == nullptr || node->Node[index]->istrue == false) return false;
-            node = node->Node[index];
+            int ind = c - 'a';
+            if (now->board[ind] == nullptr) return false;
+            now = now->board[ind];
         }
-        return true;
+        return now->isend;
     }
 
-private:
-    vector<mapTree*> Node;
-    bool istrue;
 };
 
-
-class Solution {
-public:
-    string longestWord(vector<string>& words) {
-        string ans("");
-        mapTree tree;
-        for (auto& word : words) tree.insert(word);
-        for (auto& word : words) {
-            if (tree.search(word)) {
-                if (word.size() > ans.size() || (word.size() == ans.size() && word < ans)) ans = word;
-            }
-        }
-        return ans;
-    }
-};
 
 int main() {
-    vector<string> ss{"a", "aa", "aaa"};
-    cout << Solution().longestWord(ss);
+    mapTree mtree;
+    vector<string> words{"a", "aa", "abcde", "cccccc", "c"};
+    for (auto word : words) mtree.insert(word);
+    cout << mtree.search("cc") << endl;
+    cout << mtree.search("c") << endl;
+    cout << mtree.search("abcde") << endl;
     return 0;
 }
