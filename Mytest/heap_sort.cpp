@@ -23,6 +23,7 @@ template<class T, class Compare = Less<T>>
 class myHeap {
 public:
     myHeap(vector<T>& num) : nums(num.begin(), num.end()), size(nums.size()) {}
+    myHeap() : size(0) {}
 
     bool empty() { return size == 0; }
 
@@ -123,6 +124,8 @@ int main() {
     head2.heap_sort();
     cout << "sorted heap2: ";
     head2.print();
+    myHeap<int> head3;
+    cout << head3.empty() << endl; 
     return 0;
 
 }

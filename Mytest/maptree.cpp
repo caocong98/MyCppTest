@@ -9,7 +9,8 @@ private:
     bool isend;
 
 public:
-    mapTree() : board(vector<mapTree*>(26, nullptr)), isend(false) {}
+    // mapTree() : board(vector<mapTree*>(26, nullptr)), isend(false) {}
+    mapTree() : board(26, nullptr), isend(false) {}
 
     void insert(const string& word) {
         mapTree* now = this;

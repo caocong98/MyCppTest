@@ -52,5 +52,6 @@ int main() {
     cout << "ans4:";
     for (auto num : ans4) cout << num << ' ';
     cout << endl;
+    cout << time(nullptr) << endl;
     return 0;
 }

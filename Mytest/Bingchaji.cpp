@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <unordered_map>
 using namespace std;
 
 // 1. 并查集是一种树型的数据结构，用于处理一些不相交集合（disjoint sets）的合并及查询问题。
@@ -10,8 +11,8 @@ using namespace std;
 
 class DSU {
 public:
-    DSU(int N) : n(N), father(n + 1) {
-        //并查集初始化，每个结点根结点为自身
+    DSU(int N) : n(N){
+        //并查集初始化，每个结点根结点为自身, 结点随机不按顺序，将father数组换成哈希表存储
         for (int i = 1; i <= n; ++i) father[i] = i;
     }
 
@@ -35,13 +36,15 @@ public:
 
 private:
     int n;
-    vector<int> father;
+    unordered_map<int, int> father;
+    // vector<int> father;
 
 };
 
 int main() {
-    vector<vector<int>> edges{{1,2}, {2,3}, {3,4}, {1,4}, {1,5}};
-    DSU D1(5);
+    // vector<vector<int>> edges{{1,2}, {2,3}, {3,4}, {1,4}, {1,5}};
+    vector<vector<int>> edges{{1,2}, {2,1}};
+    DSU D1(2);
     for (auto& edge : edges) {
         int u = edge[0], v = edge[1];
         D1.Union(u, v);

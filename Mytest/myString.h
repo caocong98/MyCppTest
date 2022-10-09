@@ -23,7 +23,7 @@ public:
     Mystring(const char* s = nullptr) {
         if (s == nullptr) {
             str = new char[1];
-            str[0] = '\n';
+            str[0] = '\0';
         }
         else {
             int len = Mystrlen(s);
